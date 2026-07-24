@@ -1,0 +1,6 @@
+{
+  "name": "central-facilities-send-email",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Função serverless que envia e-mails da Central de Facilities via SendGrid."
+}
