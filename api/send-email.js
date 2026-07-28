@@ -1,5 +1,5 @@
 // Vercel Serverless Function
-// Recebe { to, subject, body } do app (index.html / artifact) e envia o e-mail de
+// Recebe { to, subject, body, html } do app (index.html / artifact) e envia o e-mail de
 // verdade através da API do Brevo (antigo Sendinblue), sem nunca expor a API key no navegador.
 //
 // Variáveis de ambiente necessárias (configure no painel do Vercel, não aqui no código):
@@ -8,7 +8,6 @@
 //   BREVO_FROM_NAME  -> (opcional) nome de exibição do remetente
 
 module.exports = async function handler(req, res) {
-  // Libera CORS para o app poder chamar essa função a partir do navegador
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -21,7 +20,7 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Método não permitido. Use POST." });
   }
 
-  const { to, subject, body } = req.body || {};
+  const { to, subject, body, html } = req.body || {};
 
   if (!to || !subject || !body) {
     return res.status(400).json({ error: "Campos obrigatórios: to, subject, body." });
@@ -50,6 +49,7 @@ module.exports = async function handler(req, res) {
         to: [{ email: to }],
         subject: subject,
         textContent: body,
+        ...(html ? { htmlContent: html } : {}),
       }),
     });
 
